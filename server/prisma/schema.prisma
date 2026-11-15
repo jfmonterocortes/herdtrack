@@ -1,0 +1,129 @@
+// FILE          : schema.prisma
+// PROJECT       : HerdTrack - Group 6
+// PROGRAMMER    : Nathaniel Hickling, Juan Felipe Montero Cortes,
+//                 Kevin Napoles Paneque, Halvin Silva Mayes
+// FIRST VERSION : 2026-11-15
+// DESCRIPTION   : DRAFT database tables for HerdTrack. The whole team
+//                 must agree on these fields before anyone builds on them.
+//                 Every animal belongs to one farm, and every weight and
+//                 health event belongs to one animal. This is how each
+//                 user only sees their own farm's data.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Lists of allowed values ----------
+
+enum Sex {
+  MALE
+  FEMALE
+}
+
+enum AnimalStatus {
+  ACTIVE
+  SOLD
+  DECEASED
+}
+
+enum HealthEventType {
+  VET_VISIT
+  TREATMENT
+  VACCINE
+  OTHER
+}
+
+enum WeightUnit {
+  KG
+  LB
+}
+
+// ---------- Tables ----------
+
+// A farm is created when a user registers.
+model Farm {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+
+  users   User[]
+  animals Animal[]
+}
+
+// A person who logs in. Used by /api/auth/*.
+model User {
+  id           Int        @id @default(autoincrement())
+  email        String     @unique
+  passwordHash String     // never store the real password
+  name         String?
+  weightUnit   WeightUnit @default(KG) // changed with PUT /api/auth/me
+  createdAt    DateTime   @default(now())
+
+  farmId Int
+  farm   Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+}
+
+// One animal in the herd. Used by /api/animals/*.
+model Animal {
+  id        Int          @id @default(autoincrement())
+  name      String
+  sex       Sex
+  species   String       // example: Cattle, Goat, Sheep
+  breed     String?
+  tagNumber String
+  birthDate DateTime?
+  status    AnimalStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  farmId Int
+  farm   Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  weights      Weight[]
+  healthEvents HealthEvent[]
+
+  // Stretch goal (parents). Leave commented out until the MVP is done.
+  // damId Int?
+  // sireId Int?
+
+  // The same tag number can not be used twice on one farm.
+  @@unique([farmId, tagNumber])
+}
+
+// One weigh-in for an animal. Used by /api/animals/:id/weights and /growth.
+model Weight {
+  id       Int      @id @default(autoincrement())
+  date     DateTime
+  weightKg Decimal  @db.Decimal(7, 2) // always saved in kg
+  notes    String?
+
+  animalId Int
+  animal   Animal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@index([animalId, date])
+}
+
+// A vet visit, treatment, vaccine or other health record.
+// Used by /api/animals/:id/health-events and /api/health-events/*.
+model HealthEvent {
+  id          Int             @id @default(autoincrement())
+  type        HealthEventType
+  date        DateTime
+  description String
+  product     String?         // medicine or vaccine name
+  dose        String?
+  vet         String?
+  cost        Decimal?        @db.Decimal(10, 2)
+  nextDueDate DateTime?       // used by /api/health-events/upcoming
+
+  animalId Int
+  animal   Animal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@index([animalId, date])
+  @@index([nextDueDate])
+}
