@@ -12,15 +12,41 @@ router.post("/register", async (req, res) => {
         const { email, password, farmName } = req.body;
 
         // Make sure required fields are provided
-        if (!email || !password || !farmName) {
+        // Check that all required fields are strings
+        if (typeof email !== "string" || typeof password !== "string" || typeof farmName !== "string") {
             return res.status(400).json({
                 message: "Email, password and farm name are required."
             });
         }
 
+        // Remove unnecessary spaces from email and farm name
+        const cleanEmail = email.trim().toLowerCase();
+        const cleanFarmName = farmName.trim();
+
+        // Check email format
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+            return res.status(400).json({
+                message: "Invalid email address."
+            });
+        }
+
+        // Require a password with at least 8 characters
+        if (password.length < 8) {
+            return res.status(400).json({
+                message: "Password must be at least 8 characters."
+            });
+        }
+
+        // Make sure farm name is not just spaces
+        if (!cleanFarmName) {
+            return res.status(400).json({
+                message: "Farm name cannot be empty."
+            });
+        }
+
         // Check whether the email is already registered
         const existingUser = await prisma.user.findUnique({
-            where: { email }
+            where: { email: cleanEmail }
         });
 
         if (existingUser) {
@@ -35,10 +61,10 @@ router.post("/register", async (req, res) => {
         // Create the farm and its first user together
         const farm = await prisma.farm.create({
             data: {
-                name: farmName,
+                name: cleanFarmName,
                 users: {
                     create: {
-                        email,
+                        email: cleanEmail,
                         passwordHash
                     }
                 }
@@ -86,16 +112,18 @@ router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check required fields
-        if (!email || !password) {
+        // Check required fields and types
+        if ( typeof email !== "string" || typeof password !== "string" || !email.trim() || !password) {
             return res.status(400).json({
                 message: "Email and password are required."
             });
         }
 
+        const cleanEmail = email.trim().toLowerCase();
+
         // Find the user by email
         const user = await prisma.user.findUnique({
-            where: { email }
+            where: { email: cleanEmail }
         });
 
         if (!user) {
@@ -105,10 +133,7 @@ router.post("/login", async (req, res) => {
         }
 
         // Compare submitted password with stored hash
-        const passwordMatch = await bcrypt.compare(
-            password,
-            user.passwordHash
-        );
+        const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
         if (!passwordMatch) {
             return res.status(401).json({
@@ -182,6 +207,72 @@ router.get("/me", authMiddleware, async (req, res) => {
     }
 });
 
+
+// Update the logged-in user's profile
+router.put("/me", authMiddleware, async (req, res) => {
+    try {
+        const { name, farmName, weightUnit } = req.body;
+
+        // Check the preferred weight unit
+        if (weightUnit !== undefined && !["KG", "LB"].includes(weightUnit)) {
+            return res.status(400).json({
+                message: "Weight unit must be KG or LB."
+            });
+        }
+
+        // Build the fields to update
+        const userData = {};
+
+        if (name !== undefined) {
+            if (typeof name !== "string") {
+                return res.status(400).json({
+                    message: "Name must be text."
+                });
+            }
+            userData.name = name.trim();
+        }
+
+        if (weightUnit !== undefined) {
+            userData.weightUnit = weightUnit;
+        }
+
+        if (farmName !== undefined &&
+            (typeof farmName !== "string" || !farmName.trim())) {
+            return res.status(400).json({
+                message: "Farm name must be non-empty text."
+            });
+        }
+
+        // Update the user and farm together
+        const user = await prisma.user.update({
+            where: { id: req.user.id },
+            data: {
+                ...userData,
+                ...(farmName !== undefined && {
+                    farm: {
+                        update: { name: farmName.trim() }
+                    }
+                })
+            },
+            include: { farm: true }
+        });
+
+        return res.json({
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            weightUnit: user.weightUnit,
+            farmId: user.farmId,
+            farmName: user.farm.name
+        });
+
+    } catch (error) {
+        console.error("Profile update error:", error);
+        return res.status(500).json({
+            message: "Failed to update profile."
+        });
+    }
+});
 
 
 
