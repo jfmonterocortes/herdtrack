@@ -21,18 +21,7 @@ const SORTS = {
   youngest: { birthDate: "desc" },
 };
 
-function getFarm(req, res, next) {
-  if (req.headers.authorization) {
-    return requireAuth(req, res, next);
-  }
-  if (process.env.TEST_FARM_ID) {
-    req.user = { id: null, farmId: Number(process.env.TEST_FARM_ID) };
-    return next();
-  }
-  return res.status(401).json({ error: "You need to log in" });
-}
-
-router.use("/animals", getFarm);
+router.use("/animals", requireAuth);
 
 function readAnimal(body, partial) {
   const data = {};
@@ -136,9 +125,33 @@ router.get("/animals/species", async (req, res) => {
 });
 
 router.get("/animals/:id", async (req, res) => {
-  const animal = await findAnimal(Number(req.params.id), req.user.farmId);
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(404).json({ error: "Animal not found" });
+
+  const animal = await prisma.animal.findFirst({
+    where: { id, farmId: req.user.farmId },
+    include: {
+      weights: { orderBy: { date: "desc" }, take: 1 },
+      healthEvents: {
+        where: { nextDueDate: { gte: new Date() } },
+        orderBy: { nextDueDate: "asc" },
+        take: 1,
+      },
+    },
+  });
   if (!animal) return res.status(404).json({ error: "Animal not found" });
-  res.json(animal);
+
+  const { weights, healthEvents, ...rest } = animal;
+  const weight = weights[0];
+  const event = healthEvents[0];
+
+  res.json({
+    ...rest,
+    latestWeight: weight ? { ...weight, weightKg: Number(weight.weightKg) } : null,
+    nextHealthEvent: event
+      ? { ...event, cost: event.cost === null ? null : Number(event.cost) }
+      : null,
+  });
 });
 
 router.post("/animals", async (req, res) => {
