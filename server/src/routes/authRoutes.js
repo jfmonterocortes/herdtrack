@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../lib/prisma");
-const authMiddleware = require("../middleware/authMiddleware");
+const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.post("/register", async (req, res) => {
         // Check that all required fields are strings
         if (typeof email !== "string" || typeof password !== "string" || typeof farmName !== "string") {
             return res.status(400).json({
-                message: "Email, password and farm name are required."
+                error: "Email, password and farm name are required."
             });
         }
 
@@ -26,21 +26,21 @@ router.post("/register", async (req, res) => {
         // Check email format
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
             return res.status(400).json({
-                message: "Invalid email address."
+                error: "Invalid email address."
             });
         }
 
         // Require a password with at least 8 characters
         if (password.length < 8) {
             return res.status(400).json({
-                message: "Password must be at least 8 characters."
+                error: "Password must be at least 8 characters."
             });
         }
 
         // Make sure farm name is not just spaces
         if (!cleanFarmName) {
             return res.status(400).json({
-                message: "Farm name cannot be empty."
+                error: "Farm name cannot be empty."
             });
         }
 
@@ -51,7 +51,7 @@ router.post("/register", async (req, res) => {
 
         if (existingUser) {
             return res.status(409).json({
-                message: "Email is already registered."
+                error: "Email is already registered."
             });
         }
 
@@ -100,7 +100,7 @@ router.post("/register", async (req, res) => {
         console.error("Registration error:", error);
 
         return res.status(500).json({
-            message: "Something went wrong during registration."
+            error: "Something went wrong during registration."
         });
     }
 });
@@ -115,7 +115,7 @@ router.post("/login", async (req, res) => {
         // Check required fields and types
         if ( typeof email !== "string" || typeof password !== "string" || !email.trim() || !password) {
             return res.status(400).json({
-                message: "Email and password are required."
+                error: "Email and password are required."
             });
         }
 
@@ -128,7 +128,7 @@ router.post("/login", async (req, res) => {
 
         if (!user) {
             return res.status(401).json({
-                message: "Invalid email or password."
+                error: "Invalid email or password."
             });
         }
 
@@ -137,7 +137,7 @@ router.post("/login", async (req, res) => {
 
         if (!passwordMatch) {
             return res.status(401).json({
-                message: "Invalid email or password."
+                error: "Invalid email or password."
             });
         }
 
@@ -165,7 +165,7 @@ router.post("/login", async (req, res) => {
         console.error("Login error:", error);
 
         return res.status(500).json({
-            message: "Something went wrong during login."
+            error: "Something went wrong during login."
         });
     }
 });
@@ -184,7 +184,7 @@ router.get("/me", authMiddleware, async (req, res) => {
 
         if (!user || user.farmId !== req.user.farmId) {
             return res.status(401).json({
-                message: "User not found or session invalid."
+                error: "User not found or session invalid."
             });
         }
 
@@ -202,7 +202,7 @@ router.get("/me", authMiddleware, async (req, res) => {
         console.error("Get user error:", error);
 
         return res.status(500).json({
-            message: "Something went wrong while retrieving user."
+            error: "Something went wrong while retrieving user."
         });
     }
 });
@@ -216,7 +216,7 @@ router.put("/me", authMiddleware, async (req, res) => {
         // Check the preferred weight unit
         if (weightUnit !== undefined && !["KG", "LB"].includes(weightUnit)) {
             return res.status(400).json({
-                message: "Weight unit must be KG or LB."
+                error: "Weight unit must be KG or LB."
             });
         }
 
@@ -226,7 +226,7 @@ router.put("/me", authMiddleware, async (req, res) => {
         if (name !== undefined) {
             if (typeof name !== "string") {
                 return res.status(400).json({
-                    message: "Name must be text."
+                    error: "Name must be text."
                 });
             }
             userData.name = name.trim();
@@ -239,7 +239,7 @@ router.put("/me", authMiddleware, async (req, res) => {
         if (farmName !== undefined &&
             (typeof farmName !== "string" || !farmName.trim())) {
             return res.status(400).json({
-                message: "Farm name must be non-empty text."
+                error: "Farm name must be non-empty text."
             });
         }
 
@@ -269,7 +269,7 @@ router.put("/me", authMiddleware, async (req, res) => {
     } catch (error) {
         console.error("Profile update error:", error);
         return res.status(500).json({
-            message: "Failed to update profile."
+            error: "Failed to update profile."
         });
     }
 });
