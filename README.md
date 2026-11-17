@@ -29,6 +29,7 @@ HerdTrack is a React + Express web app that helps small farms track their herd: 
 
 ## Running the project
 
+<<<<<<< HEAD
 ### Frontend
 
 Use Node.js 20.19+ (20.x) or 22.12+. From the repository root:
@@ -56,3 +57,21 @@ pass a path relative to `/api`, such as `request('/auth/me')`.
 The navigation includes Dashboard, Herd, and Health. Animal detail pages use
 `/herd/:animalId`. Herd, Animal detail, and Health are ready for their feature
 implementations.
+=======
+### API (`/server`)
+
+Needs Node.js 20 or newer.
+
+```bash
+cd server
+npm install
+cp .env.example .env      # then fill in DATABASE_URL and JWT_SECRET
+npx prisma generate
+npm run dev               # starts the API on http://localhost:3000
+npm test                  # runs the unit tests
+```
+
+Check it is running: `GET http://localhost:3000/api/health`.
+
+Client setup steps will be added when the client is built.
+>>>>>>> origin/main
