@@ -1,0 +1,89 @@
+.weights-section {
+  margin-top: 2.5rem;
+}
+
+.weights-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.weights-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.weights-stat {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+}
+
+.weights-stat span {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.weights-stat strong {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.weights-chart {
+  margin-bottom: 1.25rem;
+  padding: 1rem 0.5rem 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+}
+
+.weights-chart-note {
+  padding: 1.5rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.weights-value {
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.weights-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.weights-actions .btn {
+  padding: 0.25rem 0.5rem;
+}
+
+.weights-delete {
+  color: #a3242f;
+}
+
+.weights-delete:hover {
+  color: #7a1a23;
+}
+
+.weight-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.weight-input input {
+  flex: 1;
+}
+
+.weight-input select {
+  width: 5rem !important;
+  flex: none;
+}
+
+.weight-notes {
+  grid-column: 1 / -1;
+}
