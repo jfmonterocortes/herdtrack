@@ -1,5 +1,6 @@
 import { startTransition } from 'react'
 import HerdPage from './HerdPage'
+import AnimalDetailPage from './AnimalDetailPage'
 import {
   Link,
   NavLink,
@@ -9,7 +10,6 @@ import {
   Routes,
   useLocation,
   useNavigate,
-  useParams,
 } from 'react-router'
 import AuthPage from './AuthPage'
 import { useAuth } from './auth'
@@ -115,19 +115,6 @@ function Dashboard() {
   )
 }
 
-function AnimalDetail() {
-  const { animalId } = useParams()
-
-  return (
-    <>
-      <Link className="back-link" to="/herd">Back to herd</Link>
-      <h1>Animal details</h1>
-      <p className="intro">Animal ID {animalId}</p>
-      <p className="card card-body empty-state">Animal records are coming soon.</p>
-    </>
-  )
-}
-
 function PlaceholderPage({ title, message }) {
   return (
     <>
@@ -174,7 +161,7 @@ export default function App() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/herd" element={<HerdPage />} />
-        <Route path="/herd/:animalId" element={<AnimalDetail />} />
+        <Route path="/herd/:animalId" element={<AnimalDetailPage />} />
         <Route path="/health" element={<PlaceholderPage title="Health" message="Health events are coming soon." />} />
         <Route path="*" element={<PlaceholderPage title="Page not found" message="Use the navigation to return to HerdTrack." />} />
       </Route>
