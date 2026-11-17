@@ -1,6 +1,7 @@
 const express = require("express");
 const weightRoutes = require("./routes/weights");
 const animalRoutes = require("./routes/animals");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api", animalRoutes);
 app.use("/api", weightRoutes);
 
