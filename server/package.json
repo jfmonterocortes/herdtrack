@@ -1,0 +1,27 @@
+{
+  "name": "herdtrack-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HerdTrack REST API (Express + Prisma + PostgreSQL)",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.3"
+  }
+}
