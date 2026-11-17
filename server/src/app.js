@@ -1,5 +1,6 @@
 const express = require("express");
 const weightRoutes = require("./routes/weights");
+const animalRoutes = require("./routes/animals");
 
 const app = express();
 
@@ -9,7 +10,9 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
 
+app.use("/api", animalRoutes);
 app.use("/api", weightRoutes);
+
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not found" });
