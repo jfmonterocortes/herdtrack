@@ -14,7 +14,7 @@ HerdTrack is a React + Express web app that helps small farms track their herd: 
 ## Folders
 
 ```
-/client   React frontend (Vite, React Router, Recharts)
+/client   React frontend (Vite, React Router, Bootstrap, Recharts)
 /server   Express REST API (Node.js, Prisma, JWT)
 ```
 
@@ -44,4 +44,30 @@ npm test                  # runs the unit tests
 
 Check it is running: `GET http://localhost:3000/api/health`.
 
-Client setup steps will be added when the client is built.
+### Frontend
+
+Use Node.js 20.19+ (20.x) or 22.12+. From the repository root:
+
+```sh
+cd client
+npm ci
+npm run dev
+```
+
+Open the URL printed by Vite. The dev and preview servers forward `/api` to
+`http://localhost:3000`. Run an API with the auth endpoints separately. To use
+another API, copy `client/.env.example` to `client/.env.local` and set
+`API_PROXY_TARGET`.
+
+Run `npm run build` from `client` to produce `client/dist`. When serving the
+built app, route `/api/*` to Express and serve `index.html` for client routes
+such as `/herd/123`.
+
+Login and registration verify the session through `GET /api/auth/me`. The
+browser keeps the JWT for the current tab, including reloads. To call an
+authenticated endpoint from a component, get `request` from `useAuth()` and
+pass a path relative to `/api`, such as `request('/auth/me')`.
+
+The navigation includes Dashboard, Herd, and Health. Animal detail pages use
+`/herd/:animalId`. Herd, Animal detail, and Health are ready for their feature
+implementations.
