@@ -1,4 +1,5 @@
 import { startTransition } from 'react'
+import HerdPage from './HerdPage'
 import {
   Link,
   NavLink,
@@ -172,7 +173,7 @@ export default function App() {
       <Route element={<SignedInLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/herd" element={<PlaceholderPage title="Herd" message="Herd records are coming soon." />} />
+        <Route path="/herd" element={<HerdPage />} />
         <Route path="/herd/:animalId" element={<AnimalDetail />} />
         <Route path="/health" element={<PlaceholderPage title="Health" message="Health events are coming soon." />} />
         <Route path="*" element={<PlaceholderPage title="Page not found" message="Use the navigation to return to HerdTrack." />} />

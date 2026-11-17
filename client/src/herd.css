@@ -1,0 +1,219 @@
+/* FILE          : herd.css
+   PROJECT       : HerdTrack - Group 6
+   PROGRAMMER    : Halvin Silva Mayes
+   FIRST VERSION : 2026-11-16
+   DESCRIPTION   : Styles for the Herd page and the add animal form. */
+
+.herd-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.herd-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.herd-toolbar input,
+.herd-toolbar select,
+.herd-form-grid select {
+  min-height: 2.8rem;
+  padding: 0.55rem 0.75rem;
+  color: inherit;
+  background-color: white;
+  border: 1px solid #778f9a;
+  border-radius: 0.4rem;
+  font: inherit;
+}
+
+.herd-search {
+  flex: 1 1 16rem;
+}
+
+.herd-secondary {
+  min-height: 2.8rem;
+  padding: 0.55rem 1rem;
+  color: var(--bs-body-color);
+  background: transparent;
+  border: 1px solid var(--button-border);
+  border-radius: 0.4rem;
+  font-weight: 600;
+}
+
+.herd-secondary:hover {
+  background: #eef8fb;
+}
+
+.herd-table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+}
+
+.herd-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.herd-table th {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: #f3fafc;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.herd-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.herd-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.herd-table tbody tr:hover {
+  background: #f7fcfd;
+}
+
+.herd-name {
+  font-weight: 650;
+}
+
+.herd-tag {
+  font-family: ui-monospace, Consolas, monospace;
+  color: var(--muted);
+}
+
+.herd-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.herd-badge-active {
+  background: #dcf3e4;
+  color: #1d5e37;
+}
+
+.herd-badge-sold {
+  background: #ddf1f7;
+  color: #145c78;
+}
+
+.herd-badge-deceased {
+  background: #ebeeef;
+  color: #485e66;
+}
+
+.herd-empty {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.herd-alert {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  color: #842029;
+  background: #fbe9eb;
+  border: 1px solid #f1c3c8;
+  border-radius: 0.4rem;
+}
+
+.herd-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: #16334073;
+}
+
+.herd-modal {
+  width: min(100%, 34rem);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  background: var(--surface);
+  border-radius: 0.9rem;
+  box-shadow: 0 20px 50px #16334033;
+}
+
+.herd-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.herd-modal-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.herd-close {
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.herd-close:hover {
+  background: #eef8fb;
+}
+
+.herd-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.herd-form-grid .field {
+  min-width: 0;
+}
+
+.herd-form-grid input,
+.herd-form-grid select {
+  width: 100%;
+  min-width: 0;
+}
+
+.herd-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 36rem) {
+  .herd-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .herd-header .primary-button {
+    width: 100%;
+  }
+}
